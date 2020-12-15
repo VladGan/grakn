@@ -28,7 +28,7 @@ config:
 build:
   quality:
     filter:
-      owner: graknlabs
+      owner: VladGan
       branch: master
     build-analysis:
       machine: graknlabs-ubuntu-20.04-java11
@@ -76,7 +76,7 @@ build:
     test-assembly-linux-targz:
       machine: graknlabs-ubuntu-20.04-java11
       filter:
-        owner: graknlabs
+        owner: VladGan
         branch: master
       dependencies: [build, build-dependency, test-unit, test-integration, test-behaviour]
       script: |
@@ -86,7 +86,7 @@ build:
     test-assembly-docker:
       machine: graknlabs-ubuntu-20.04-java11
       filter:
-        owner: graknlabs
+        owner: VladGan
         branch: master
       dependencies: [build, build-dependency, test-unit, test-integration, test-behaviour]
       script: |
@@ -94,7 +94,7 @@ build:
     deploy-artifact-snapshot:
       machine: graknlabs-ubuntu-20.04-java11
       filter:
-        owner: graknlabs
+        owner: VladGan
         branch: master
       dependencies: [test-assembly-linux-targz]
       script: |
@@ -106,7 +106,7 @@ build:
     deploy-apt-snapshot:
       machine: graknlabs-ubuntu-20.04-java11
       filter:
-        owner: graknlabs
+        owner: VladGan
         branch: master
       dependencies: [test-assembly-linux-targz]
       script: |
@@ -122,7 +122,7 @@ build:
     test-deployment-apt:
       machine: graknlabs-ubuntu-20.04-java11
       filter:
-        owner: graknlabs
+        owner: VladGan
         branch: master
       dependencies: [deploy-apt-snapshot]
       script: |
@@ -149,7 +149,7 @@ build:
     #     bazel test //test/deployment:rpm --action_env=GRABL_COMMIT --test_output=streamed
 release:
   filter:
-    owner: graknlabs
+    owner: VladGan
     branch: master
   validation:
     validate-dependencies:
@@ -159,7 +159,7 @@ release:
     deploy-github:
       machine: graknlabs-ubuntu-20.04-java11
       filter:
-        owner: graknlabs
+        owner: VladGan
         branch: master
       script: |
         pip install certifi
@@ -171,7 +171,7 @@ release:
       machine: graknlabs-ubuntu-20.04-java11
       dependencies: [deploy-github]
       filter:
-        owner: graknlabs
+        owner: VladGan
         branch: master
       script: |
         export DEPLOY_BREW_TOKEN=$REPO_GITHUB_TOKEN
@@ -179,7 +179,7 @@ release:
     deploy-apt-release:
       machine: graknlabs-ubuntu-20.04-java11
       filter:
-        owner: graknlabs
+        owner: VladGan
         branch: master
       dependencies: [deploy-github]
       script: |
@@ -206,7 +206,7 @@ release:
     deploy-docker:
       machine: graknlabs-ubuntu-20.04-java11
       filter:
-        owner: graknlabs
+        owner: VladGan
         branch: master
       dependencies: [deploy-github]
       script: |
@@ -215,7 +215,7 @@ release:
     deploy-artifact-release:
       machine: graknlabs-ubuntu-20.04-java11
       filter:
-        owner: graknlabs
+        owner: VladGan
         branch: master
       dependencies: [deploy-github]
       script: |
