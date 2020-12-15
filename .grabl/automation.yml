@@ -26,13 +26,13 @@ build:
     A:
       machine: graknlabs-ubuntu-20.04-java11
       script: |
-        sleep 1 * 60 * 30
+        sleep 1800
         echo 123
     B:
       machine: graknlabs-ubuntu-20.04-java11
       dependencies: [A]
       script: |
-        sleep 1 * 60 * 30
+        sleep 1800
         echo 123
     C:
       machine: graknlabs-ubuntu-20.04-java11
