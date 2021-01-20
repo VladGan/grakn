@@ -35,6 +35,9 @@ public class IterableProducer<T> {
     private static final int BUFFER_MIN_SIZE = 32;
     private static final int BUFFER_MAX_SIZE = 64;
 
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m";
+
     private final LinkedList<Producer<T>> producers;
     private final Queue queue;
     private final Iterator iterator;

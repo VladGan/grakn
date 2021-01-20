@@ -38,6 +38,10 @@ import static grakn.core.common.concurrent.ExecutorService.forkJoinPool;
 
 public class GraphProducer implements Producer<VertexMap> {
 
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_RED = "\u001B[31m";
+
     private final int parallelisation;
     private final GraphManager graphMgr;
     private final GraphProcedure procedure;
@@ -83,7 +87,11 @@ public class GraphProducer implements Producer<VertexMap> {
     }
 
     private synchronized void distribute(Queue<VertexMap> queue, int request) {
-        System.out.println(Thread.currentThread().getId() + "  distribute, size: " + runningJobs.size());
+        if (runningJobs.size() > 8) {
+            System.out.println(Thread.currentThread().getId() + ANSI_RED + "  distribute, size: " + runningJobs.size() + ANSI_RESET);
+        } else {
+            System.out.println(Thread.currentThread().getId() + ANSI_GREEN + "  distribute, size: " + runningJobs.size() + ANSI_RESET);
+        }
         if (isDone.get()) return;
         int requestSplitMax = (int) Math.ceil((double) request / runningJobs.size());
         int requestSent = 0;
