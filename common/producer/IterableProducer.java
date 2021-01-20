@@ -59,6 +59,8 @@ public class IterableProducer<T> {
         synchronized (queue) {
             if (producers.isEmpty()) return;
             int available = queue.max - queue.size() - queue.pending;
+//            System.out.println("available: " + available + " queue.size(): " + queue.size() + " queue.pending: " + queue.pending + " total: " + (available + queue.pending));
+
             if (available > queue.max - queue.min) {
                 queue.pending += available;
                 assert !producers.isEmpty();

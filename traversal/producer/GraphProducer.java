@@ -71,21 +71,25 @@ public class GraphProducer implements Producer<VertexMap> {
     }
 
     private synchronized void initialise(Queue<VertexMap> queue) {
+        System.out.println(Thread.currentThread().getId() + "  initialise");
         for (int i = 0; i < parallelisation && start.hasNext(); i++) {
             ResourceIterator<VertexMap> iter =
                     new GraphIterator(graphMgr, start.next(), procedure, params, filter).distinct(produced);
             runningJobs.put(iter, CompletableFuture.completedFuture(null));
+            System.out.println(Thread.currentThread().getId() + "  created " + iter.hashCode());
         }
         isInitialised = true;
         if (runningJobs.isEmpty()) done(queue);
     }
 
     private synchronized void distribute(Queue<VertexMap> queue, int request) {
+        System.out.println(Thread.currentThread().getId() + "  distribute, size: " + runningJobs.size());
         if (isDone.get()) return;
         int requestSplitMax = (int) Math.ceil((double) request / runningJobs.size());
         int requestSent = 0;
         for (ResourceIterator<VertexMap> iterator : runningJobs.keySet()) {
             int requestSplit = Math.min(requestSplitMax, request - requestSent);
+            System.out.println(Thread.currentThread().getId() + "  added asyncJob to " + iterator.hashCode());
             runningJobs.computeIfPresent(iterator, (iter, asyncJob) -> asyncJob.thenRunAsync(
                     () -> job(queue, iter, requestSplit), forkJoinPool()
             ));
@@ -95,11 +99,12 @@ public class GraphProducer implements Producer<VertexMap> {
     }
 
     private synchronized void transition(Queue<VertexMap> queue, ResourceIterator<VertexMap> iterator, int unfulfilled) {
+        System.out.println(Thread.currentThread().getId() + "  transition on iterator " + iterator.hashCode());
         if (iterator.hasNext()) {
             assert unfulfilled == 0;
             return;
         }
-
+        System.out.println(Thread.currentThread().getId() + "  we REMOVE iterator |||||||||||||||||||||||||||||||||||||||||||||||| " + iterator.hashCode());
         runningJobs.remove(iterator);
         if (start.hasNext()) {
             ResourceIterator<VertexMap> newIter =
@@ -107,6 +112,7 @@ public class GraphProducer implements Producer<VertexMap> {
             CompletableFuture<Void> asyncJob = unfulfilled > 0
                     ? CompletableFuture.runAsync(() -> job(queue, newIter, unfulfilled), forkJoinPool())
                     : CompletableFuture.runAsync(() -> {}, forkJoinPool());
+            System.out.println(Thread.currentThread().getId() + "  we PUT iterator |||||||||||||||||||||||||||||||||||||||||||||||| " + newIter.hashCode());
             runningJobs.put(newIter, asyncJob);
         } else if (!runningJobs.isEmpty() && unfulfilled > 0) {
             distribute(queue, unfulfilled);
@@ -116,6 +122,7 @@ public class GraphProducer implements Producer<VertexMap> {
     }
 
     private void job(Queue<VertexMap> queue, ResourceIterator<VertexMap> iterator, int request) {
+        System.out.println(Thread.currentThread().getId() + "  job on iterator " + iterator.hashCode());
         try {
             int i = 0;
             for (; i < request && iterator.hasNext() && !isDone.get(); i++) queue.put(iterator.next());
