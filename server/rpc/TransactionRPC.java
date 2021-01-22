@@ -86,6 +86,7 @@ public class TransactionRPC {
                 case OPEN_REQ:
                     throw GraknException.of(TRANSACTION_ALREADY_OPENED);
                 case COMMIT_REQ:
+                    System.out.println("GANESHLOG: got to the COMMIT_REQ");
                     commit(request.getId());
                     return;
                 case ROLLBACK_REQ:
@@ -138,10 +139,14 @@ public class TransactionRPC {
     }
 
     private void commit(String requestId) {
+        System.out.println(Thread.currentThread().getId() + "  GANESHLOG: Transaction RPC.commit 1");
         transaction.commit();
+        System.out.println(Thread.currentThread().getId() + "  GANESHLOG: Transaction RPC.commit 2");
         respond(TransactionProto.Transaction.Res.newBuilder().setId(requestId).setCommitRes(
                 TransactionProto.Transaction.Commit.Res.getDefaultInstance()).build());
+        System.out.println(Thread.currentThread().getId() + "  GANESHLOG: Transaction RPC.commit 3");
         close();
+        System.out.println(Thread.currentThread().getId() + "  GANESHLOG: Transaction RPC.commit 4");
     }
 
     private void rollback(String requestId) {

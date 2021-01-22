@@ -42,7 +42,8 @@
 
     <root level="DEBUG"/>
 
-    <!--    <logger name="grakn.core.server.rpc" level="DEBUG" />-->
+    <logger name="io.grpc.netty.NettyServerHandler" level="INFO" />
+    <logger name="io.netty" level="INFO" />
 
     <!--
     TRACE: (Extremely verbose reporting events that gives complete traceability of a server operation)
