@@ -125,8 +125,8 @@ public class AsyncProducer<T> implements Producer<T> {
     }
 
     @Override
-    public synchronized void recycle() {
-        iterators.recycle();
-        runningJobs.keySet().forEach(ResourceIterator::recycle);
+    public synchronized void recycle(String from) {
+        iterators.recycle(from);
+        runningJobs.keySet().forEach(j -> recycle(from + " -> AsyncProducer"));
     }
 }

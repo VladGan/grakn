@@ -67,7 +67,7 @@ public class BaseProducer<T> implements Producer<T> {
     }
 
     @Override
-    public synchronized void recycle() {
-        iterator.recycle();
+    public synchronized void recycle(String from) {
+        iterator.recycle(from + " -> BaseProducer");
     }
 }

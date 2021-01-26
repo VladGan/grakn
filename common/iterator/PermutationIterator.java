@@ -110,5 +110,5 @@ class PermutationIterator<T> extends AbstractResourceIterator<List<T>> {
     }
 
     @Override
-    public void recycle() {}
+    public void recycle(String from) {}
 }

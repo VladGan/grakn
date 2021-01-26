@@ -42,7 +42,7 @@ class SynchronisedIterator<T> extends AbstractResourceIterator<T> {
     }
 
     @Override
-    public synchronized void recycle() {
-        iterator.recycle();
+    public synchronized void recycle(String from) {
+        iterator.recycle(from + " -> SynchronisedIterator");
     }
 }

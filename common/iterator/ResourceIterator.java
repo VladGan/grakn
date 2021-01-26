@@ -79,5 +79,5 @@ public interface ResourceIterator<T> extends Iterator<T> {
 
     ResourceIterator<T> onFinalise(Runnable function);
 
-    void recycle();
+    void recycle(String from);
 }

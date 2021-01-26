@@ -112,7 +112,7 @@ public abstract class ThingAdjacencyImpl implements ThingAdjacency {
             if (predicate.test(edge = iterator.next())) break;
             else edge = null;
         }
-        iterator.recycle();
+        iterator.recycle("ThingAdjacencyImpl");
         return edge;
     }
 
@@ -126,7 +126,7 @@ public abstract class ThingAdjacencyImpl implements ThingAdjacency {
             if (predicate.test(edge = iterator.next())) break;
             else edge = null;
         }
-        iterator.recycle();
+        iterator.recycle("ThingAdjacencyImpl");
         return edge;
     }
 

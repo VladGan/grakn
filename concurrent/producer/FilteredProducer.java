@@ -38,8 +38,8 @@ public class FilteredProducer<T> implements Producer<T> {
     }
 
     @Override
-    public void recycle() {
-        baseProducer.recycle();
+    public void recycle(String from) {
+        baseProducer.recycle(from);
     }
 
     @ThreadSafe

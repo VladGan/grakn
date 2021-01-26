@@ -95,14 +95,14 @@ public abstract class AbstractResourceIterator<T> implements ResourceIterator<T>
     @Override
     public boolean allMatch(Predicate<T> predicate) {
         boolean match = !filter(e -> !predicate.test(e)).hasNext();
-        recycle();
+        recycle("AbstractResourceIterator");
         return match;
     }
 
     @Override
     public boolean anyMatch(Predicate<T> predicate) {
         boolean match = filter(predicate).hasNext();
-        recycle();
+        recycle("AbstractResourceIterator");
         return match;
     }
 
@@ -119,7 +119,7 @@ public abstract class AbstractResourceIterator<T> implements ResourceIterator<T>
     @Override
     public T firstOrNull() {
         T next = hasNext() ? next() : null;
-        recycle();
+        recycle("AbstractResourceIterator");
         return next;
     }
 
@@ -127,21 +127,21 @@ public abstract class AbstractResourceIterator<T> implements ResourceIterator<T>
     public Stream<T> stream() {
         return StreamSupport.stream(
                 spliteratorUnknownSize(this, ORDERED | IMMUTABLE), false
-        ).onClose(this::recycle);
+        ).onClose(() -> this.recycle("AbstractResourceIterator"));
     }
 
     @Override
     public List<T> toList() {
         ArrayList<T> list = new ArrayList<>();
         forEachRemaining(list::add);
-        recycle();
+        recycle("AbstractResourceIterator");
         return list;
     }
 
     @Override
     public void toList(List<T> list) {
         forEachRemaining(list::add);
-        recycle();
+        recycle("AbstractResourceIterator");
     }
 
     @Override
@@ -155,7 +155,7 @@ public abstract class AbstractResourceIterator<T> implements ResourceIterator<T>
     public LinkedHashSet<T> toLinkedSet() {
         LinkedHashSet<T> linkedSet = new LinkedHashSet<>();
         forEachRemaining(linkedSet::add);
-        recycle();
+        recycle("AbstractResourceIterator");
         return linkedSet;
     }
 
@@ -163,7 +163,7 @@ public abstract class AbstractResourceIterator<T> implements ResourceIterator<T>
     public long count() {
         long count = 0;
         for (; hasNext(); count++) next();
-        recycle();
+        recycle("AbstractResourceIterator");
         return count;
     }
 
@@ -183,5 +183,5 @@ public abstract class AbstractResourceIterator<T> implements ResourceIterator<T>
     }
 
     @Override
-    public abstract void recycle();
+    public abstract void recycle(String from);
 }

@@ -128,7 +128,7 @@ public class GraphIterator extends AbstractResourceIterator<VertexMap> {
                 } else {
                     backTrackCleanUp(pos);
                     answer.remove(toID);
-                    toIter.recycle();
+                    toIter.recycle("GraphIterator");
                     return false;
                 }
             }
@@ -160,7 +160,7 @@ public class GraphIterator extends AbstractResourceIterator<VertexMap> {
         if (pos == computeNextSeekPos) {
             computeNextSeekPos = edgeCount;
         } else if (pos > computeNextSeekPos) {
-            if (!edge.isClosureEdge()) iterators.get(toID).recycle();
+            if (!edge.isClosureEdge()) iterators.get(toID).recycle("GraphIterator");
             if (!backTrack(pos)) return false;
 
             if (edge.isClosureEdge()) {
@@ -301,7 +301,7 @@ public class GraphIterator extends AbstractResourceIterator<VertexMap> {
     }
 
     @Override
-    public void recycle() {}
+    public void recycle(String from) {}
 
     private static class SeekStack {
 

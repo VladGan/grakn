@@ -87,7 +87,7 @@ public class ProducerIterator<T> extends AbstractResourceIterator<T> {
             state = State.FETCHED;
         } else {
             Done done = result.second();
-            recycle();
+            recycle("ProducerIterator");
             state = State.COMPLETED;
             if (done.error().isPresent()) {
                 throw GraknException.of(done.error().get());
@@ -105,10 +105,10 @@ public class ProducerIterator<T> extends AbstractResourceIterator<T> {
     }
 
     @Override
-    public void recycle() {
+    public void recycle(String from) {
         // TODO: If this method is wrapped in synchronize(queue), we won't need producers to be ConcurrentLinkedQueue
         //       However, doing so would also cause a deadlock. Let's investigate this soon.
-        producers.forEach(Producer::recycle);
+        producers.forEach(p -> p.recycle(from + " -> ProducerIterator"));
     }
 
     private static class Done {

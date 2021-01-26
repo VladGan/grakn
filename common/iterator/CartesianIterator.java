@@ -58,7 +58,7 @@ class CartesianIterator<T> extends AbstractResourceIterator<List<T>> {
                 result.add(next);
             } else {
                 result.clear();
-                recycle();
+                recycle("CartesianIterator");
                 state = State.COMPLETED;
                 return false;
             }
@@ -95,8 +95,8 @@ class CartesianIterator<T> extends AbstractResourceIterator<List<T>> {
     }
 
     @Override
-    public void recycle() {
-        iterators.forEach(ResourceIterator::recycle);
+    public void recycle(String from) {
+        iterators.forEach((i) -> i.recycle(from));
     }
 
     @Override

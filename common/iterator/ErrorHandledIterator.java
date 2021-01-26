@@ -37,7 +37,7 @@ class ErrorHandledIterator<T> extends AbstractResourceIterator<T> {
         try {
             return iterator.hasNext();
         } catch (Exception e) {
-            recycle();
+            recycle("ErrorHandledIterator");
             throw exceptionFn.apply(e);
         }
     }
@@ -47,13 +47,13 @@ class ErrorHandledIterator<T> extends AbstractResourceIterator<T> {
         try {
             return iterator.next();
         } catch (Exception e) {
-            recycle();
+            recycle("ErrorHandledIterator");
             throw exceptionFn.apply(e);
         }
     }
 
     @Override
-    public void recycle() {
-        iterator.recycle();
+    public void recycle(String from) {
+        iterator.recycle(from);
     }
 }

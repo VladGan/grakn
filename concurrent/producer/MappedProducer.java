@@ -38,8 +38,8 @@ public class MappedProducer<T, U> implements Producer<U> {
     }
 
     @Override
-    public void recycle() {
-        baseProducer.recycle();
+    public void recycle(String from) {
+        baseProducer.recycle(from + " -> MappedProducer");
     }
 
     @ThreadSafe

@@ -22,11 +22,15 @@ import grakn.core.common.iterator.AbstractResourceIterator;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiFunction;
 
 import static grakn.core.common.collection.Bytes.bytesHavePrefix;
 
 public final class RocksIterator<T> extends AbstractResourceIterator<T> implements AutoCloseable {
+
+    private static AtomicLong openIterators = new AtomicLong(0);
+    private static AtomicLong closeIterators = new AtomicLong(0);
 
     private final byte[] prefix;
     private final RocksStorage storage;
@@ -42,7 +46,7 @@ public final class RocksIterator<T> extends AbstractResourceIterator<T> implemen
         this.storage = storage;
         this.prefix = prefix;
         this.constructor = constructor;
-
+        if (openIterators.incrementAndGet() % 1000 == 0) System.out.println("create iterator " + openIterators.get());
         isOpen = new AtomicBoolean(true);
         state = State.INIT;
     }
@@ -56,7 +60,7 @@ public final class RocksIterator<T> extends AbstractResourceIterator<T> implemen
         byte[] key;
         if (!internalRocksIterator.isValid() || !bytesHavePrefix(key = internalRocksIterator.key(), prefix)) {
             state = State.COMPLETED;
-            recycle();
+            recycle("RocksIterator");
             return false;
         }
 
@@ -72,12 +76,14 @@ public final class RocksIterator<T> extends AbstractResourceIterator<T> implemen
     }
 
     @Override
-    public void recycle() {
+    public void recycle(String from) {
+        System.out.println("FROM " + from);
         close();
     }
 
     @Override
     public void close() {
+        if (closeIterators.incrementAndGet() % 1000 == 0) System.out.println("checking to close iterator " + closeIterators.get());
         if (isOpen.compareAndSet(true, false)) {
             if (state != State.INIT) storage.recycle(internalRocksIterator);
             state = State.COMPLETED;

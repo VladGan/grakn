@@ -39,8 +39,8 @@ public class FinaliseHandledIterator<T> extends AbstractResourceIterator<T> impl
     }
 
     @Override
-    public void recycle() {
-        iterator.recycle();
+    public void recycle(String from) {
+        iterator.recycle(from);
     }
 
     @Override

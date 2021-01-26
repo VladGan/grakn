@@ -41,7 +41,7 @@ class MappedIterator<T, U> extends AbstractResourceIterator<U> {
     }
 
     @Override
-    public void recycle() {
-        iterator.recycle();
+    public void recycle(String from) {
+        iterator.recycle(from + " -> MappedIterator");
     }
 }

@@ -71,7 +71,7 @@ class FlatMappedIterator<T, U> extends AbstractResourceIterator<U> {
     }
 
     @Override
-    public void recycle() {
-        sourceIterator.recycle();
+    public void recycle(String from) {
+        sourceIterator.recycle(from);
     }
 }

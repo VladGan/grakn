@@ -41,7 +41,7 @@ class BaseIterator<T> extends AbstractResourceIterator<T> {
     }
 
     @Override
-    public void recycle() {
-        iterator.ifFirst(ResourceIterator::recycle);
+    public void recycle(String from) {
+        iterator.ifFirst((i) -> i.recycle(from));
     }
 }

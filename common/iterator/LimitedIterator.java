@@ -37,7 +37,7 @@ class LimitedIterator<T> extends AbstractResourceIterator<T> {
         if (counter < limit && iterator.hasNext()) {
             return true;
         } else {
-            recycle();
+            recycle("AbstractResourceIterator");
             return false;
         }
     }
@@ -50,7 +50,7 @@ class LimitedIterator<T> extends AbstractResourceIterator<T> {
     }
 
     @Override
-    public void recycle() {
-        iterator.recycle();
+    public void recycle(String from) {
+        iterator.recycle(from);
     }
 }

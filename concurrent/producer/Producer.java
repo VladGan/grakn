@@ -26,7 +26,7 @@ public interface Producer<T> {
 
     void produce(Queue<T> queue, int request);
 
-    void recycle();
+    void recycle(String from);
 
     default <U> Producer<U> map(Function<T, U> mappingFn) {
         return new MappedProducer<>(this, mappingFn);

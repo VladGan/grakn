@@ -49,7 +49,7 @@ class LinkedIterators<T> extends AbstractResourceIterator<T> {
     }
 
     @Override
-    public void recycle() {
-        iterators.forEach(ResourceIterator::recycle);
+    public void recycle(String from) {
+        iterators.forEach(i -> i.recycle(from));
     }
 }
