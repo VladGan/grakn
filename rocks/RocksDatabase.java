@@ -29,9 +29,10 @@ import grakn.core.graph.common.Encoding;
 import grakn.core.graph.common.KeyGenerator;
 import grakn.core.logic.LogicCache;
 import grakn.core.traversal.TraversalCache;
-import org.rocksdb.OptimisticTransactionDB;
 import org.rocksdb.RocksDBException;
 import org.rocksdb.Status;
+import org.rocksdb.TransactionDB;
+import org.rocksdb.TransactionDBOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,8 +59,8 @@ import static java.util.Comparator.reverseOrder;
 
 public class RocksDatabase implements Grakn.Database {
 
-    protected final OptimisticTransactionDB rocksSchema;
-    protected final OptimisticTransactionDB rocksData;
+    protected final TransactionDB rocksSchema;
+    protected final TransactionDB rocksData;
     protected final ConcurrentMap<UUID, Pair<RocksSession, Long>> sessions;
     protected final String name;
     protected StatisticsBackgroundCounter statisticsBackgroundCounter;
@@ -82,9 +83,11 @@ public class RocksDatabase implements Grakn.Database {
         sessions = new ConcurrentHashMap<>();
         dataWriteSchemaLock = new StampedLock();
 
+        TransactionDBOptions txOptions = new TransactionDBOptions().setTransactionLockTimeout(-1);
+
         try {
-            rocksSchema = OptimisticTransactionDB.open(this.grakn.rocksOptions(), directory().resolve(Encoding.ROCKS_SCHEMA).toString());
-            rocksData = OptimisticTransactionDB.open(this.grakn.rocksOptions(), directory().resolve(Encoding.ROCKS_DATA).toString());
+            rocksSchema = TransactionDB.open(this.grakn.rocksOptions(), txOptions, directory().resolve(Encoding.ROCKS_SCHEMA).toString());
+            rocksData = TransactionDB.open(this.grakn.rocksOptions(), txOptions, directory().resolve(Encoding.ROCKS_DATA).toString());
         } catch (RocksDBException e) {
             throw GraknException.of(e);
         }
@@ -214,11 +217,11 @@ public class RocksDatabase implements Grakn.Database {
         return grakn.options();
     }
 
-    OptimisticTransactionDB rocksData() {
+    TransactionDB rocksData() {
         return rocksData;
     }
 
-    OptimisticTransactionDB rocksSchema() {
+    TransactionDB rocksSchema() {
         return rocksSchema;
     }
 

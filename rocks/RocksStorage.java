@@ -26,8 +26,8 @@ import grakn.core.concurrent.lock.ManagedReadWriteLock;
 import grakn.core.graph.common.KeyGenerator;
 import grakn.core.graph.common.Storage;
 import org.rocksdb.AbstractImmutableNativeReference;
-import org.rocksdb.OptimisticTransactionDB;
-import org.rocksdb.OptimisticTransactionOptions;
+import org.rocksdb.TransactionDB;
+import org.rocksdb.TransactionOptions;
 import org.rocksdb.ReadOptions;
 import org.rocksdb.RocksDBException;
 import org.rocksdb.Snapshot;
@@ -59,17 +59,17 @@ public abstract class RocksStorage implements Storage {
     protected final boolean isReadOnly;
 
     private final ConcurrentLinkedQueue<org.rocksdb.RocksIterator> recycled;
-    private final OptimisticTransactionOptions transactionOptions;
+    private final TransactionOptions transactionOptions;
     private final WriteOptions writeOptions;
     private final AtomicBoolean isOpen;
     private final Snapshot snapshot;
 
-    private RocksStorage(OptimisticTransactionDB rocksDB, boolean isReadOnly) {
+    private RocksStorage(TransactionDB rocksDB, boolean isReadOnly) {
         this.isReadOnly = isReadOnly;
         iterators = new ConcurrentSet<>();
         recycled = new ConcurrentLinkedQueue<>();
         writeOptions = new WriteOptions();
-        transactionOptions = new OptimisticTransactionOptions().setSetSnapshot(true);
+        transactionOptions = new TransactionOptions().setSetSnapshot(true);
         storageTransaction = rocksDB.beginTransaction(writeOptions, transactionOptions);
         snapshot = storageTransaction.getSnapshot();
         readOptions = new ReadOptions().setSnapshot(snapshot);
@@ -163,7 +163,7 @@ public abstract class RocksStorage implements Storage {
 
     static class Cache extends RocksStorage {
 
-        public Cache(OptimisticTransactionDB rocksDB) {
+        public Cache(TransactionDB rocksDB) {
             super(rocksDB, true);
         }
 
@@ -191,7 +191,7 @@ public abstract class RocksStorage implements Storage {
         protected final ManagedReadWriteLock readWriteLock;
         protected final RocksTransaction transaction;
 
-        TransactionBounded(OptimisticTransactionDB rocksDB, RocksTransaction transaction) {
+        TransactionBounded(TransactionDB rocksDB, RocksTransaction transaction) {
             super(rocksDB, transaction.type().isRead());
             this.transaction = transaction;
             readWriteLock = new ManagedReadWriteLock();
