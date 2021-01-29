@@ -25,8 +25,7 @@ import grakn.core.common.exception.GraknException;
 import grakn.core.common.parameters.Arguments;
 import grakn.core.common.parameters.Options;
 import grakn.core.concurrent.common.ExecutorService;
-import org.rocksdb.RocksDB;
-import org.rocksdb.UInt64AddOperator;
+import org.rocksdb.*;
 
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -54,8 +53,13 @@ public class RocksGrakn implements Grakn {
         this.directory = directory;
         this.options = options;
         this.databaseMgr = databaseMgrFactory.databaseManager(this);
+
+        Statistics statistics = new Statistics();
+        statistics.setStatsLevel(StatsLevel.ALL);
+
         this.rocksConfig = new org.rocksdb.Options()
                 .setCreateIfMissing(true)
+                .setStatistics(statistics)
                 .setMergeOperator(new UInt64AddOperator());
 
         ExecutorService.init(MAX_THREADS);

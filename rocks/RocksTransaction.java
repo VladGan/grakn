@@ -35,6 +35,8 @@ import grakn.core.traversal.TraversalCache;
 import grakn.core.traversal.TraversalEngine;
 import org.rocksdb.RocksDBException;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static grakn.common.util.Objects.className;
@@ -206,8 +208,7 @@ public abstract class RocksTransaction implements Grakn.Transaction {
                 try {
                     if (type().isRead()) throw GraknException.of(ILLEGAL_COMMIT);
                     else if (graphMgr.data().isModified()) throw GraknException.of(SESSION_SCHEMA_VIOLATION);
-
-                    conceptMgr.validateTypes();
+                    conceptMgr.validateThings();
                     logicMgr.revalidateAndReindexRules();
                     graphMgr.schema().commit();
                     schemaStorage.commit();
@@ -292,7 +293,13 @@ public abstract class RocksTransaction implements Grakn.Transaction {
                     if (type().isRead()) throw GraknException.of(ILLEGAL_COMMIT);
                     else if (graphMgr.schema().isModified()) throw GraknException.of(SESSION_DATA_VIOLATION);
 
+                    Instant start = Instant.now();
                     conceptMgr.validateThings();
+                    Instant end = Instant.now();
+                    Duration time = Duration.between(start, end);
+                    if (time.toMillis() > 100) {
+                        System.out.println("\u001B[31m TIME ============================================================   \u001B[0m" + time.toMillis());
+                    }
                     graphMgr.data().commit();
                     dataStorage.commit();
                     triggerStatisticBgCounter();
