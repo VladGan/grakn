@@ -53,7 +53,7 @@ public class CovidTest {
                     Options.Query options = new Options.Query();
                     options.parallel(false);
                     Context.Query context = new Context.Query(txn.context(), options);
-                    ResourceIterator<ConceptMap> answers = txn.query().match(query, context);
+                    ResourceIterator<ConceptMap> answers = txn.query().match(query);
                     while (answers.hasNext())
                         System.out.println(answers.next());
                     System.out.println("FINISH");
